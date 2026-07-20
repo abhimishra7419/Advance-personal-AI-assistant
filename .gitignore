@@ -1,0 +1,4 @@
+.env
+database/chats_data/
+.venv/
+database/learning_data/userdata.txt
