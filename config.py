@@ -71,7 +71,8 @@ VECTOR_STORE_DIR.mkdir(parents=True, exist_ok=True)
 #   GROQ_API_KEY, GROQ_API_KEY_2, GROQ_API_KEY_3, ... (no upper limit).
 # Request 1 uses the 1st key, request 2 the 2nd, request 3 the 3rd, then back to 1st.
 # If a key fails (e.g. rate limit 429), the server tries the next key until one succeeds.
-# Model determines which AI model to use (llama-3.3-70b-versatile is latest).
+# Model determines which AI model to use ("openai/gpt-oss-120b").
+# this was old (llama-3.3-70b-versatile is latest).
 
 def _load_groq_api_keys() -> list:
     """
@@ -100,7 +101,7 @@ def _load_groq_api_keys() -> list:
 GROQ_API_KEYS = _load_groq_api_keys()
 # Backward compatibility: single key name still used in docs; code uses GROQ_API_KEYS.
 GROQ_API_KEY = GROQ_API_KEYS[0] if GROQ_API_KEYS else ""
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 # ============================================================================
 # TAVILY API CONFIGURATION

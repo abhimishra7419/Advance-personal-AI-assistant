@@ -154,7 +154,7 @@ class GroqService:
             keys_tried.append(i)
             try:
                 # build chain with this key's LLM and invoke once.
-                chain = prompt | self.lllms[i]
+                chain = prompt | self.llms[i]
                 response = chain.invoke({"history": messages, "question": question})
                 # Log success if we had to fallback to a different key
                 if j > 0:
@@ -180,7 +180,7 @@ class GroqService:
     def get_response(
              self,
              question: str,
-             chats_histroy: Optional[List[tuple]] = None 
+             chat_history: Optional[List[tuple]] = None 
     ) -> str:
         """
         Return the assistant's reply for this question (general chat, no web search).
@@ -204,15 +204,15 @@ class GroqService:
                 system_message += f"\n\nRelevant context from your learning data and past conversations: \n{escape_curly_braces}"
 
             # Prompt template: system message, chat history placeholder, current question.
-            Prompt = ChatPromptTemplate.from_meassages([
+            Prompt = ChatPromptTemplate.from_messages([
                 ("system", system_message),
                 MessagesPlaceholder(variable_name="history"),
                 ("human", "{question}"),
             ])
-            # Convert (user, assistant) pairss to Langchain message objects.
+            # Convert (user, assistant) pairs to Langchain message objects.
             messages = []
-            if chats_histroy:
-                for human_msg, ai_msg in chats_histroy:
+            if chat_history:
+                for human_msg, ai_msg in chat_history:
                     messages.append(HumanMessage(content=human_msg))
                     messages.append(AIMessage(content=ai_msg))
             

@@ -108,7 +108,7 @@ class RealtimeGroqService(GroqService):
             logger.error(f"Error performing Tavily search: (e)")
             return ""
         
-    def get_response(self, question: str, chat_histroy: Optional[List[tuple]] = None) -> str:
+    def get_response(self, question: str, chat_history: Optional[List[tuple]] = None) -> str:
         """
         Run Tavily search for the question, add results to the system message, then call Groq
         via the parent's _invoke_llm (same multi-key round-robin and fallback as general chat).
@@ -145,8 +145,8 @@ class RealtimeGroqService(GroqService):
                 ("human", "{question}"),
             ])
             messages = []
-            if chat_histroy:
-                for human_msg, ai_msg in chat_histroy:
+            if chat_history:
+                for human_msg, ai_msg in chat_history:
                     messages.append(HumanMessage(content=human_msg))
                     messages.append(AIMessage(content=ai_msg))
             

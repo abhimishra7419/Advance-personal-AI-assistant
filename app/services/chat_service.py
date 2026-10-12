@@ -180,17 +180,42 @@ class ChatService:
         self.add_message(session_id, "assistant", response)
         return response
     
+    # def process_realtime_message(self, session_id: str, user_message: str) -> str:
+    #     """
+    #     Handle one realtime message: add user message, call realtime service (tavily + Groq), add reply, return it.
+    #     User the same session as process_message so history is shared. Raises ValueError if realtime_service is None.
+    #     """
+    #     if not self.realtime_service:
+    #         raise ValueError("Realtime service is not initialized, cannot process realtime queries.")
+    #     self.add_message(session_id, "user", user_message)
+    #     chat_history = self.format_history_for_llm(session_id, exclude_last=True)
+    #     response = self.realtime_service.get_response(question=user_message, chat_history=chat_history)
+    #     self.add_message(session_id, "assistant", response)
+    
     def process_realtime_message(self, session_id: str, user_message: str) -> str:
         """
-        Handle one realtime message: add user message, call realtime service (tavily + Groq), add reply, return it.
-        User the same session as process_message so history is shared. Raises ValueError if realtime_service is None.
+        Handle a realtime message, save the reply, and return it.
         """
         if not self.realtime_service:
-            raise ValueError("Realtime service is not initialized, cannot process realtime queries.")
+            raise ValueError(
+                "Realtime service is not initialized, "
+                "cannot process realtime queries."
+            )
         self.add_message(session_id, "user", user_message)
-        chat_history = self.format_history_for_llm(session_id, exclude_last=True)
-        response = self.realtime_service.get_response(question=user_message, chat_history=chat_history)
+        chat_history = self.format_history_for_llm(
+            session_id, exclude_last=True
+        )
+        response = self.realtime_service.get_response(
+            question=user_message,
+            chat_history=chat_history
+        )
+        if not isinstance(response, str):
+            raise TypeError(
+                f"Realtime service returned {type(response).__name__}, "
+                "expected str."
+            )
         self.add_message(session_id, "assistant", response)
+        return response
 
     #------------------------------------------------------------------------
     # PERSIST SESSION TO DISK
@@ -211,7 +236,7 @@ class ChatService:
         filepath = CHATS_DATA_DIR / filename
         chat_dict = {
             "session_id": session_id,
-            "message": [{"role": msg.role, "content": msg.contant} for msg in messages]
+            "message": [{"role": msg.role, "content": msg.content} for msg in messages]
         }
 
         try:
@@ -219,5 +244,3 @@ class ChatService:
                 json.dump(chat_dict, f, indent=2, ensure_ascii=False)
         except Exception as e:
             logger.error("Failed to save chat session %s to disk: %s", session_id, e)
-
-# 19 min

@@ -82,9 +82,12 @@ python run.py
 6. Open another terminal and run:
 
 ```bash
-python test.py
+## python test.py
+"https://huggingface.co/ampixa/sanoTTS"
 ```
 
+---
+Voice engine
 ---
 
 ## 🚀 Future Plans
